@@ -22,3 +22,5 @@ Route::post('/generate-token','HooksController@generateToken');
 Route::post('/account/balance','HooksController@checkAccountBalance');
 
 Route::post('/account/mini/statement','HooksController@generateMiniStatement');
+
+Route::post('/account/inquiry','HooksController@accountInquiry');

@@ -49,6 +49,20 @@ class HooksController extends Controller
 
     }
 
+    //inqury on account
+    public function accountInquiry(Request $request){
+        $countryCode = 'KE';
+        $accountId = $request->input('accountId');
+
+        $endurl = 'account-test/v2/accounts/search/'.$countryCode.'/'.$accountId;
+        //sign the request
+        $signature = self::signAccountBalance($accountId,$countryCode);
+        //send the request to jenga
+        $response = JengaApi::get($endurl,$signature);
+
+        return $response;
+    }
+
     public function signAccountBalance($accountNo,$countryCode){
 
         $plaintext = $accountNo.$countryCode;
