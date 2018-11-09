@@ -5,6 +5,8 @@ namespace App\Helpers;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\BadResponseException;
+use anlutro\LaravelSettings\Facade as Setting;
+
 
 class  JengaApi {
 
@@ -40,5 +42,50 @@ class  JengaApi {
         }
 
 
+    }
+
+    //post to end point for requests
+    public static function post($endurl,$requestBody,$signature){
+        $client = new Client();
+        $baseUrl = env('JENGA_ENDPOINT');
+        $token = Setting::get('api-token.token');
+
+        try{
+            $response = $client->post($baseUrl.$endurl,[
+                'headers' => [
+                    'Authorization' => 'Bearer '.$token,
+                    'Content-Type' => 'application/json',
+                    'signature' => $signature
+                ],
+                'json' => $requestBody
+            ]);
+
+            return json_decode((string) $response->getBody(), true);
+
+        }catch (BadResponseException $exception){
+
+            return json_decode((string) $exception->getResponse()->getBody()->getContents(), true);
+        }
+    }
+
+    public static function get($endpoint,$signature)
+    {
+        $client = new Client();
+        $baseUrl = env('JENGA_ENDPOINT');
+        $token = Setting::get('api-token.token');
+        try {
+            $response = $client->get($baseUrl.$endpoint, [
+                'headers' => [
+                    'Authorization' => 'Bearer '.$token,
+                    'Content-Type' => 'application/json',
+                    'signature' => base64_encode($signature)
+                ]
+            ]);
+
+            return json_decode((string) $response->getBody(), true);
+        } catch (BadResponseException $exception)
+        {
+            return json_decode((string) $exception->getResponse()->getBody()->getContents(), true);
+        }
     }
 }
