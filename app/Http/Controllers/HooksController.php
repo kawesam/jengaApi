@@ -35,16 +35,19 @@ class HooksController extends Controller
 
     }
 
-    //method to generate signature for accountbalance
-//    public function signAccountBalance($accountNo,$countryCode){
-//        $plaintext = $accountNo.$countryCode;
-//        $privateKey=openssl_get_privatekey(env('PRIVATE_KEY'));
-//        $token = Setting::get('api-token.token');
-//
-//        openssl_sign($plaintext,$signature,$privateKey,OPENSSL_ALGO_SHA256);
-////        $privateKey=env('PRIVATE_KEY');
-//
-//    }
+    //method to check the mini statement
+    public function generateMiniStatement(Request $request){
+        $countryCode = 'KE';
+        $accountId = $request->input('accountId');
+        $endurl = 'account-test/v2/accounts/ministatement/'.$countryCode.'/'.$accountId;
+        //sign the request
+        $signature = self::signAccountBalance($accountId,$countryCode);
+        //send the request to jenga
+        $response = JengaApi::get($endurl,$signature);
+
+        return $response;
+
+    }
 
     public function signAccountBalance($accountNo,$countryCode){
 
