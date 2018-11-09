@@ -18,3 +18,5 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::post('/generate-token','HooksController@generateToken');
+
+Route::post('/account/balance','HooksController@checkAccountBalance');
