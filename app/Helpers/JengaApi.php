@@ -48,6 +48,7 @@ class  JengaApi {
     public static function post($endurl,$requestBody,$signature){
         $client = new Client();
         $baseUrl = env('JENGA_ENDPOINT');
+        $url = "https://uat.jengahq.io/transaction/v2/remittance";
         $token = Setting::get('api-token.token');
 
         try{
@@ -66,6 +67,7 @@ class  JengaApi {
 
             return json_decode((string) $exception->getResponse()->getBody()->getContents(), true);
         }
+
     }
 
     public static function get($endpoint,$signature)

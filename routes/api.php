@@ -24,3 +24,6 @@ Route::post('/account/balance','HooksController@checkAccountBalance');
 Route::post('/account/mini/statement','HooksController@generateMiniStatement');
 
 Route::post('/account/inquiry','HooksController@accountInquiry');
+
+//Money movement
+Route::post('/move/money/within','HooksController@moveMoneyWithinEquity');

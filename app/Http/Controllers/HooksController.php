@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\GenerateSignature;
 use App\Helpers\JengaApi;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use anlutro\LaravelSettings\Facade as Setting;
 
@@ -37,7 +39,7 @@ class HooksController extends Controller
 
     //method to check the mini statement
     public function generateMiniStatement(Request $request){
-        $countryCode = 'KE';
+        $countryCode = 'KES';
         $accountId = $request->input('accountId');
         $endurl = 'account-test/v2/accounts/ministatement/'.$countryCode.'/'.$accountId;
         //sign the request
@@ -61,6 +63,25 @@ class HooksController extends Controller
         $response = JengaApi::get($endurl,$signature);
 
         return $response;
+    }
+
+    //move money within equity account
+    public function moveMoneyWithinEquity(Request $request){
+        $data = $request->toArray();
+        $requestBody = $request->all();
+        $endurl =  'transaction-test/v2/remittance';
+        $sourceCountryCode = $data['source']['countryCode'];
+        $transferAmount= $data['transfer']['amount'];
+        $sourceAccountNo= $data['source']['name'];
+        $transferReference= $data['transfer']['reference'];
+
+        $signature = GenerateSignature::signInternalTransfer($sourceAccountNo,$transferAmount,$sourceCountryCode,$transferReference);
+
+        $response  = JengaApi::post($endurl,$requestBody,$signature);
+
+        return $response;
+
+
     }
 
     public function signAccountBalance($accountNo,$countryCode){
