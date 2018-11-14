@@ -24,7 +24,7 @@ class  JengaApi {
         $client = new Client();
 
         try{
-            $response = $client->post($baseUrl.'identity-test/v2/token',[
+            $response = $client->post($baseUrl.'identity/v2/token',[
                 'headers' => [
                     'Authorization' => 'Basic '.$key,
                     'Content-Type' => 'application/x-www-form-urlencoded',
@@ -48,7 +48,6 @@ class  JengaApi {
     public static function post($endurl,$requestBody,$signature){
         $client = new Client();
         $baseUrl = env('JENGA_ENDPOINT');
-        $url = "https://uat.jengahq.io/transaction/v2/remittance";
         $token = Setting::get('api-token.token');
 
         try{
@@ -56,7 +55,7 @@ class  JengaApi {
                 'headers' => [
                     'Authorization' => 'Bearer '.$token,
                     'Content-Type' => 'application/json',
-                    'signature' => $signature
+                    'signature' =>  base64_encode($signature)
                 ],
                 'json' => $requestBody
             ]);
