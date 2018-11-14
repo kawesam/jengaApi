@@ -27,9 +27,9 @@ class HooksController extends Controller
     public function checkAccountBalance(Request $request){
         $countryCode = 'KE';
         $accountId = $request->input('accountId');
-        $endurl = 'account-test/v2/accounts/balances/'.$countryCode.'/'.$accountId;
+        $endurl = 'account/v2/accounts/balances/'.$countryCode.'/'.$accountId;
 
-        $signature = self::signAccountBalance($accountId,$countryCode);
+        $signature = self::signAccountBalance($countryCode,$accountId);
 
         $response = JengaApi::get($endurl,$signature);
 
@@ -39,11 +39,11 @@ class HooksController extends Controller
 
     //method to check the mini statement
     public function generateMiniStatement(Request $request){
-        $countryCode = 'KES';
+        $countryCode = 'KE';
         $accountId = $request->input('accountId');
-        $endurl = 'account-test/v2/accounts/ministatement/'.$countryCode.'/'.$accountId;
+        $endurl = 'account/v2/accounts/ministatement/'.$countryCode.'/'.$accountId;
         //sign the request
-        $signature = self::signAccountBalance($accountId,$countryCode);
+        $signature = self::signAccountBalance($countryCode,$accountId);
         //send the request to jenga
         $response = JengaApi::get($endurl,$signature);
 
@@ -56,9 +56,9 @@ class HooksController extends Controller
         $countryCode = 'KE';
         $accountId = $request->input('accountId');
 
-        $endurl = 'account-test/v2/accounts/search/'.$countryCode.'/'.$accountId;
+        $endurl = 'account/v2/search/'.$countryCode.'/'.$accountId;
         //sign the request
-        $signature = self::signAccountBalance($accountId,$countryCode);
+        $signature = self::signAccountBalance($countryCode,$accountId);
         //send the request to jenga
         $response = JengaApi::get($endurl,$signature);
 
@@ -69,13 +69,14 @@ class HooksController extends Controller
     public function moveMoneyWithinEquity(Request $request){
         $data = $request->toArray();
         $requestBody = $request->all();
-        $endurl =  'transaction-test/v2/remittance';
-        $sourceCountryCode = $data['source']['countryCode'];
+        $endurl =  'transaction/v2/remittance';
+
+        $sourceAccountNo= $data['source']['accountNumber'];
         $transferAmount= $data['transfer']['amount'];
-        $sourceAccountNo= $data['source']['name'];
+        $transferCurrencyCode= $data['transfer']['currencyCode'];
         $transferReference= $data['transfer']['reference'];
 
-        $signature = GenerateSignature::signInternalTransfer($sourceAccountNo,$transferAmount,$sourceCountryCode,$transferReference);
+        $signature = GenerateSignature::signInternalTransfer($sourceAccountNo,$transferAmount,$transferCurrencyCode,$transferReference);
 
         $response  = JengaApi::post($endurl,$requestBody,$signature);
 
@@ -84,9 +85,30 @@ class HooksController extends Controller
 
     }
 
-    public function signAccountBalance($accountNo,$countryCode){
+    //move money to mobile wallet
+    public function moveMoneyToMobile(Request $request){
+        $data = $request->toArray();
+        $requestBody = $request->all();
+        $endurl =  'transaction/v2/remittance';
+        $transferAmount= $data['transfer']['amount'];
+        $transferCurrencyCode = $data['transfer']['currencyCode'];
+        $transferReference= $data['transfer']['reference'];
+        $sourceAccount= $data['source']['accountNumber'];
 
-        $plaintext = $accountNo.$countryCode;
+        //generate the signature
+        $signature = GenerateSignature::signMobileWalletTransfer($transferAmount,$transferCurrencyCode,$transferReference,$sourceAccount);
+
+        $response = JengaApi::post($endurl,$requestBody,$signature);
+
+        return $response;
+
+
+
+    }
+
+    public function signAccountBalance($countryCode,$accountNo){
+
+        $plaintext = $countryCode.$accountNo;
 
         $fp = fopen(env('PRIVATE_KEY'), "r");
         $priv_key = fread($fp, 8192);
@@ -94,7 +116,6 @@ class HooksController extends Controller
         $pkeyid = openssl_get_privatekey($priv_key);
 
         openssl_sign($plaintext,$signature,$pkeyid,OPENSSL_ALGO_SHA256);
-        $signature = urlencode( base64_encode( $signature ) );
 
         return $signature;
 
