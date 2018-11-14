@@ -27,3 +27,4 @@ Route::post('/account/inquiry','HooksController@accountInquiry');
 
 //Money movement
 Route::post('/move/money/within','HooksController@moveMoneyWithinEquity');
+Route::post('/move/mobile/money','HooksController@moveMoneyToMobile');
