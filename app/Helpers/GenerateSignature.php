@@ -79,6 +79,23 @@ class  GenerateSignature
         return $signature;
     }
 
+    //generate signature for pesalink to bank account
+    public static function signPesalinkToBankMoneyTransfer($transferAmount,$transferCurrencyCode,$transferReference,$destinationName,$sourceAccountNumber){
+
+        $plaintext = $transferAmount.$transferCurrencyCode.$transferReference.$destinationName.$sourceAccountNumber;
+
+        $fp = fopen(env('PRIVATE_KEY'), "r");
+        $priv_key = fread($fp, 8192);
+        fclose($fp);
+        $pkeyid = openssl_get_privatekey($priv_key);
+
+        openssl_sign($plaintext,$signature,$pkeyid,OPENSSL_ALGO_SHA256);
+
+        return $signature;
+
+
+    }
+
 
 }
 
