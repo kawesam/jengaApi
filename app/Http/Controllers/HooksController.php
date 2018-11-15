@@ -106,6 +106,25 @@ class HooksController extends Controller
 
     }
 
+    //move money via RTGS
+    public function moveMoneyViaRtgs(Request $request){
+        $data = $request->toArray();
+        $requestBody = $request->all();
+        $endurl =  'transaction/v2/remittance';
+        $transferReference= $data['transfer']['reference'];
+        $transferDate = $data['transfer']['date'];
+        $sourceAccount= $data['source']['accountNumber'];
+        $destinationAccount = $data['destination']['accountNumber'];
+        $transferAmount= $data['transfer']['amount'];
+
+        $signature = GenerateSignature::signRtgsMoneyTransfer($transferReference,$transferDate,$sourceAccount,$destinationAccount,$transferAmount);
+
+        $response = JengaApi::post($endurl,$requestBody,$signature);
+
+        return $response;
+
+
+    }
     public function signAccountBalance($countryCode,$accountNo){
 
         $plaintext = $countryCode.$accountNo;
