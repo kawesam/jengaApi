@@ -144,6 +144,28 @@ class HooksController extends Controller
         return $response;
     }
 
+    //move money via EFT
+    public function moveMoneyViaEft(Request $request){
+        $data = $request->toArray();
+        $requestBody = $request->all();
+        $endurl =  'transaction/v2/remittance';
+
+        $transferReference= $data['transfer']['reference'];
+        $sourceAccount= $data['source']['accountNumber'];
+        $destinationAccount = $data['destination']['accountNumber'];
+        $transferAmount= $data['transfer']['amount'];
+        $destinationBankCode = $data['destination']['bankCode'];
+
+        $signature = GenerateSignature::signEftMoneyTransfer($transferReference,$sourceAccount,$destinationAccount,$transferAmount,$destinationBankCode);
+
+        $response = JengaApi::post($endurl,$requestBody,$signature);
+
+        return $response;
+
+
+
+    }
+
     public function signAccountBalance($countryCode,$accountNo){
 
         $plaintext = $countryCode.$accountNo;
