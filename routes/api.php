@@ -31,3 +31,4 @@ Route::post('/move/mobile/money','HooksController@moveMoneyToMobile');
 Route::post('/move/rtgs/money','HooksController@moveMoneyViaRtgs');
 Route::post('/move/swift/money','HooksController@moveMoneyViaSwift');
 Route::post('/move/eft/money','HooksController@moveMoneyViaEft');
+Route::post('/move/pesalink/money/bank','HooksController@moveMoneyViaPesaLinkToBank');
