@@ -29,3 +29,4 @@ Route::post('/account/inquiry','HooksController@accountInquiry');
 Route::post('/move/money/within','HooksController@moveMoneyWithinEquity');
 Route::post('/move/mobile/money','HooksController@moveMoneyToMobile');
 Route::post('/move/rtgs/money','HooksController@moveMoneyViaRtgs');
+Route::post('/move/swift/money','HooksController@moveMoneyViaSwift');
