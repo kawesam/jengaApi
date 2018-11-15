@@ -37,3 +37,7 @@ Route::post('/move/pesalink/money/mobile','HooksController@moveMoneyViaPesaLinkT
 
 //send money queries
 Route::post('/money/inquire','HooksController@pesaLinkInqury');
+
+
+//credit score
+Route::post('/check/credit-score','HooksController@checkCreditScore');

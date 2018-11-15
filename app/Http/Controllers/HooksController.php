@@ -222,6 +222,23 @@ class HooksController extends Controller
 
     }
 
+    //method to do credit scoring
+    public function checkCreditScore(Request $request){
+        $data = $request->toArray();
+        $requestBody = $request->all();
+        $endurl = 'customer/v2/creditinfo';
+
+        $dateOfBirth = $data['customer'][0]['dateOfBirth'];
+        $merchantCode =env('merchantCode');
+        $documentNumber = $data['customer'][0]['identityDocument']['documentNumber'];
+
+        $signature = GenerateSignature::signCreditScore($dateOfBirth,$merchantCode,$documentNumber);
+
+        $response = JengaApi::post($endurl,$requestBody,$signature);
+
+        return $response;
+    }
+
 
     public function signAccountBalance($countryCode,$accountNo){
 
