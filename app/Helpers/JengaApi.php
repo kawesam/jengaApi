@@ -89,4 +89,28 @@ class  JengaApi {
             return json_decode((string) $exception->getResponse()->getBody()->getContents(), true);
         }
     }
+
+    //specific method for the Send Money Inquiry
+    public static function postInquiry($endurl,$requestBody){
+        $client = new Client();
+        $baseUrl = env('JENGA_ENDPOINT');
+        $token = Setting::get('api-token.token');
+
+        try{
+            $response = $client->post($baseUrl.$endurl,[
+                'headers' => [
+                    'Authorization' => 'Bearer '.$token,
+                    'Content-Type' => 'application/json',
+                ],
+                'json' => $requestBody
+            ]);
+
+            return json_decode((string) $response->getBody(), true);
+
+        }catch (BadResponseException $exception){
+
+            return json_decode((string) $exception->getResponse()->getBody()->getContents(), true);
+        }
+
+    }
 }

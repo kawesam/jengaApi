@@ -208,6 +208,20 @@ class HooksController extends Controller
 
     }
 
+    //method to query pesalink account
+    public function pesaLinkInqury(Request $request){
+        $endurl =  'transaction/v2/pesalink/inquire';
+        $mobileNumber = $request->input('mobileNumber');
+
+        $requestBody = array();
+        $requestBody['mobileNumber'] = $mobileNumber;
+
+        $response = JengaApi::postInquiry($endurl,$requestBody);
+
+        return $response;
+
+    }
+
 
     public function signAccountBalance($countryCode,$accountNo){
 
