@@ -34,6 +34,21 @@ class  GenerateSignature
         return $signature;
     }
 
+    //generate signature for rtgs transfer of funds
+    public static function signRtgsMoneyTransfer($transferReference,$transferDate,$sourceAccountNumber,$destinationAccountNumber,$transferAmount){
+
+        $plaintext = $transferReference.$transferDate.$sourceAccountNumber.$destinationAccountNumber.$transferAmount;
+
+        $fp = fopen(env('PRIVATE_KEY'), "r");
+        $priv_key = fread($fp, 8192);
+        fclose($fp);
+        $pkeyid = openssl_get_privatekey($priv_key);
+
+        openssl_sign($plaintext,$signature,$pkeyid,OPENSSL_ALGO_SHA256);
+
+        return $signature;
+    }
+
 
 }
 
