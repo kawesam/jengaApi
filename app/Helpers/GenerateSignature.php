@@ -64,6 +64,21 @@ class  GenerateSignature
         return $signature;
     }
 
+    //generate signature for eft money transfer
+    public static function signEftMoneyTransfer($transferReference,$sourceAccountNumber,$destinationAccountNumber,$transferAmount,$destinationBankCode){
+
+        $plaintext = $transferReference.$sourceAccountNumber.$destinationAccountNumber.$transferAmount.$destinationBankCode;
+
+        $fp = fopen(env('PRIVATE_KEY'), "r");
+        $priv_key = fread($fp, 8192);
+        fclose($fp);
+        $pkeyid = openssl_get_privatekey($priv_key);
+
+        openssl_sign($plaintext,$signature,$pkeyid,OPENSSL_ALGO_SHA256);
+
+        return $signature;
+    }
+
 
 }
 
