@@ -185,9 +185,30 @@ class HooksController extends Controller
         return $response;
 
 
+    }
+
+    //method to move money via pesalink to a mobile account
+    public function moveMoneyViaPesaLinkToMobile(Request $request){
+        $data = $request->toArray();
+        $requestBody = $request->all();
+        $endurl =  'transaction/v2/remittance';
+
+        $transferAmount= $data['transfer']['amount'];
+        $transferCurrencyCode= $data['transfer']['currencyCode'];
+        $transferReference= $data['transfer']['reference'];
+        $destinationName= $data['destination']['name'];
+        $sourceAccount= $data['source']['accountNumber'];
+
+        $signature = GenerateSignature::signPesalinkToMobileMoneyTransfer($transferAmount,$transferCurrencyCode,$transferReference,$destinationName,$sourceAccount);
+
+        $response = JengaApi::post($endurl,$requestBody,$signature);
+
+        return $response;
 
 
     }
+
+
     public function signAccountBalance($countryCode,$accountNo){
 
         $plaintext = $countryCode.$accountNo;
