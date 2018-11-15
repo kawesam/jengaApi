@@ -240,6 +240,23 @@ class HooksController extends Controller
     }
 
 
+    //get forex rates
+    public function getForexRates(Request $request){
+        $countryCode = $request->input('countryCode');
+        $currencyCode = $request->input('currencyCode');
+
+        $endurl = 'transaction/v2/foreignexchangerates';
+
+        $requestBody = array();
+        $requestBody['countryCode'] = $countryCode;
+        $requestBody['currencyCode'] = $currencyCode;
+
+        $response = JengaApi::postInquiry($endurl,$requestBody);
+
+        return $response;
+    }
+
+
     public function signAccountBalance($countryCode,$accountNo){
 
         $plaintext = $countryCode.$accountNo;

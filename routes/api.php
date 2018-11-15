@@ -41,3 +41,6 @@ Route::post('/money/inquire','HooksController@pesaLinkInqury');
 
 //credit score
 Route::post('/check/credit-score','HooksController@checkCreditScore');
+
+//get forex rates
+Route::post('/get/forex/rates','HooksController@getForexRates');
